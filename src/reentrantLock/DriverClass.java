@@ -10,9 +10,9 @@ public class DriverClass {
         PrintOddNumbersThread<ReentrantLockBasic> pon = new PrintOddNumbersThread<>(instance);
         PrintEvenNumbersThread<ReentrantLockBasic> pen = new PrintEvenNumbersThread<>(instance);
         PrintCharctersThread<ReentrantLockBasic> pc = new PrintCharctersThread<>(instance);
-        Thread t1 = new Thread(pon);
-        Thread t2 = new Thread(pen);
-        Thread t3 = new Thread(pc);
+        Thread t1 = new Thread(pon, "PrintOddNumbersThread");
+        Thread t2 = new Thread(pen, "PrintEvenNumbersThread");
+        Thread t3 = new Thread(pc, "PrintCharctersThread");
         t1.start();
         t2.start();
         t3.start();
@@ -22,6 +22,7 @@ public class DriverClass {
             c--;
         }
         t1.join();
+        t3.interrupt();
         t3.join();
         System.out.println("Counter1 :- "+instance.getCounter1());
         System.out.println("Counter3 :- " + instance.getCounter3());

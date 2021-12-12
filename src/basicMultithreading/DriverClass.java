@@ -6,7 +6,7 @@ import basicMultithreading.threads.PrintOddNumbersThread;
 import basicMultithreading.threads.PrintEvenNumbersThread;
 
 public class DriverClass {
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) {
         CountingClass cc = new CountingClass();
         PrintOddNumbersThread<CountingClass> pon = new PrintOddNumbersThread<>(cc);
         PrintEvenNumbersThread<CountingClass> pen = new PrintEvenNumbersThread<>(cc);
@@ -22,8 +22,18 @@ public class DriverClass {
             System.out.println("Main Thread");
             c--;
         }
-        t1.join();
-        t3.join();
+        try {
+			t1.join();
+		} catch (InterruptedException e) {
+			System.out.println("Exception ocurred in PrintOddNumbersThread");
+			e.printStackTrace();
+		}
+        try {
+			t3.join();
+		} catch (InterruptedException e) {
+			System.out.println("Exception ocurred in PrintCharctersThread");
+			e.printStackTrace();
+		}
         System.out.println("Counter1 :- "+cc.getCounter1());
         System.out.println("Counter3 :- " + cc.getCounter3());
         t2.stop();

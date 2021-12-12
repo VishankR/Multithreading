@@ -7,16 +7,16 @@ public class Data {
 
     // True if receiver should wait
     // False if sender should wait
-    private boolean transfer = true;
+    private boolean sendPacket = true;
 
     public synchronized void send(String packet) {
-        while (!transfer) {
+        while (!sendPacket) {
             try {
                 /*1. Simply put, calling wait() forces the current thread to wait until some other thread
                      invokes notify() or notifyAll() on the same object(As here instance of "Data" class).
                   2. We placed these methods inside synchronized methods to provide intrinsic locks.
                      If a thread calling wait() method does not own the inherent lock, an error will be thrown.
-                  3. The major difference is that wait() releases the lock or monitor while sleep() doesn’t releases
+                  3. The major difference is that wait() releases the lock or monitor while sleep() does not releases
                      the lock or monitor */
                 wait();
             } catch (InterruptedException e)  {
@@ -24,7 +24,7 @@ public class Data {
                 System.out.println("Send method Thread interrupted");
             }
         }
-        transfer = false;
+        sendPacket = false;
 
         this.packet = packet;
         //This method simply wakes all threads that are waiting on this object's monitor.
@@ -36,7 +36,7 @@ public class Data {
     }
 
     public synchronized String receive() {
-        while (transfer) {
+        while (sendPacket) {
             try {
                 wait();
             } catch (InterruptedException e)  {
@@ -44,7 +44,7 @@ public class Data {
                 System.out.println("receive method Thread interrupted");
             }
         }
-        transfer = true;
+        sendPacket = true;
 
         notifyAll();
         return packet;

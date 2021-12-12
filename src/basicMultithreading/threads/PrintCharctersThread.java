@@ -8,11 +8,13 @@ public class PrintCharctersThread<T extends Counter> implements  Runnable{
     @Override
     public void run() {
         int i = 65;
-        while (i<=75){
+        while (i<=70){
             try {
                 t.incrementCounter3();
             } catch (InterruptedException e) {
-                e.printStackTrace();
+            	System.out.println("PrintCharctersThread got interrupted.");
+            	break;
+               // e.printStackTrace();
             }
             i++;
         }

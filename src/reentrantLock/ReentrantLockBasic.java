@@ -2,6 +2,7 @@ package reentrantLock;
 import basicMultithreading.Counter;
 import constants.ConsoleTextColors;
 
+import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -15,7 +16,7 @@ public class ReentrantLockBasic extends Counter {
         hold count is 0, the resource is unlocked.
     3. Reentrant Locks also offer a fairness parameter, by which the lock would abide by the order of the lock request i.e.
        after a thread unlocks the resource, the lock would go to the thread which has been waiting for the longest time.
-       This fairness mode is set up by passing true to the constructor of the lock.
+       This fairness mode is set up by passing true to the constructor of the lock. (Prevent Thread Starvation)
     4. Unlock statement is always called in the finally block to ensure that the lock is released even if an exception is
        thrown in the method body(try block).
     5. A ReentrantLock is unstructured, unlike synchronized constructs -- i.e. you don't need to use a block structure for
@@ -53,8 +54,8 @@ public class ReentrantLockBasic extends Counter {
     private int counter1 = 0;
     private static int counter2 = 0;
     private int counter3 = 0;
-
     private ReentrantLock lock = new ReentrantLock();
+    private Condition isCharThreadEnded = lock.newCondition();
 /*    private final Object obj1 = new Object();
     private static final Object obj2 = new Object();
     private final Object obj3 = new Object();
@@ -84,10 +85,12 @@ public class ReentrantLockBasic extends Counter {
 
     public boolean incrementCounter1() throws InterruptedException {
         if(lock.tryLock()) {
+        	//Await works same as wait() so it releases the lock and then start waiting for signal.
+        	//isCharThreadEnded.await();
             try{
                 System.out.println(ConsoleTextColors.TEXT_RED + "Have Accquired lock on obj and incrementing counter1" + ConsoleTextColors.TEXT_RESET);
-                System.out.println(ConsoleTextColors.TEXT_RED + "Hold Count : " + lock.getHoldCount() +" Owner : "+lock.isHeldByCurrentThread()+ ConsoleTextColors.TEXT_RESET);
-                Thread.sleep(5000);
+                System.out.println(ConsoleTextColors.TEXT_RED + "Hold Count : " + lock.getHoldCount() +" Owner : "+Thread.currentThread().getName()+ ConsoleTextColors.TEXT_RESET);
+                Thread.sleep(2000);
                 counter1++;
                 return true;
             }finally {
@@ -103,12 +106,13 @@ public class ReentrantLockBasic extends Counter {
         if(lock.tryLock()){
             try{
                 System.out.println(ConsoleTextColors.TEXT_BLUE+"Have Accquired lock on obj and incrementing counter2"+ConsoleTextColors.TEXT_RESET);
-                System.out.println(ConsoleTextColors.TEXT_BLUE + "Hold Count : " + lock.getHoldCount()+" Owner : "+lock.isHeldByCurrentThread() + ConsoleTextColors.TEXT_RESET);
-                Thread.sleep(5000);
+                System.out.println(ConsoleTextColors.TEXT_BLUE + "Hold Count : " + lock.getHoldCount()+" Owner : "+Thread.currentThread().getName()+ ConsoleTextColors.TEXT_RESET);
+                Thread.sleep(2000);
                 counter2++;
                 return true;
             }finally {
-                lock.unlock();
+            	//isCharThreadEnded.signal();
+            	lock.unlock();
             }
         }else {
             Thread.sleep(5000);
@@ -119,10 +123,11 @@ public class ReentrantLockBasic extends Counter {
 }
     public boolean  incrementCounter3() throws InterruptedException {
         if(lock.tryLock()){
+        	//isCharThreadEnded.await();
             try{
                 System.out.println(ConsoleTextColors.TEXT_CYAN+"Have Accquired lock on obj and incrementing counter3"+ConsoleTextColors.TEXT_RESET);
-                System.out.println(ConsoleTextColors.TEXT_CYAN + "Hold Count : " + lock.getHoldCount()+" Owner : "+lock.isHeldByCurrentThread() + ConsoleTextColors.TEXT_RESET);
-                Thread.sleep(5000);
+                System.out.println(ConsoleTextColors.TEXT_CYAN + "Hold Count : " + lock.getHoldCount()+" Owner : "+Thread.currentThread().getName()+ ConsoleTextColors.TEXT_RESET);
+                Thread.sleep(2000);
                 counter3++;
                 return true;
             }finally{
